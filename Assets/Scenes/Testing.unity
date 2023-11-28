@@ -131,6 +131,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6206139248690359449, guid: eaf33b11cdb3c3b42af701a4be792bc1,
+        type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6714016160418859679, guid: eaf33b11cdb3c3b42af701a4be792bc1,
         type: 3}
       propertyPath: m_Name
@@ -159,17 +164,17 @@ PrefabInstance:
     - target: {fileID: 7028896794123838097, guid: eaf33b11cdb3c3b42af701a4be792bc1,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 7028896794123838097, guid: eaf33b11cdb3c3b42af701a4be792bc1,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 7028896794123838097, guid: eaf33b11cdb3c3b42af701a4be792bc1,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 7028896794123838097, guid: eaf33b11cdb3c3b42af701a4be792bc1,
         type: 3}
@@ -187,7 +192,39 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 9666792619565301, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 4480656882122485621, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 8953212831091040580, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 4202578569288358370, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 1084672293704160021, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 7845854712298593692, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 8195805242963299045, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 1422017855787137836, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 4032326572511909487, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 8048654953536271702, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 1328422124488217649, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 1689472765156948193, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 911200038050022371, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 1089312290695710051, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 1678945065607833532, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 1760276243469948400, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 3491624096811046126, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 5461064519393989735, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 2115714548453151395, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 931115343810416682, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 8669011515481005205, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 8736353693380368555, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 5235864143876077590, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 6888433573634122589, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 3322753301891309241, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 6659450323778232691, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 3837695125941252588, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 840338813437950142, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 3795312629249404099, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 1330734780486702260, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 6024542720280239786, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
+    - {fileID: 1398404207081782911, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: eaf33b11cdb3c3b42af701a4be792bc1, type: 3}
@@ -558,5 +595,5 @@ SceneRoots:
   - {fileID: 1670521765}
   - {fileID: 1647355297}
   - {fileID: 1103645921}
-  - {fileID: 170410954}
   - {fileID: 468628372}
+  - {fileID: 170410954}
