@@ -2,12 +2,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Input;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float walkSpeed = 5f;
     [SerializeField] private float runSpeed = 10f;
+    [SerializeField] private float rotationSpeed = 10f;
+    
     private CharacterController characterController;
     private Animator animator;
 
@@ -30,9 +33,11 @@ public class PlayerController : MonoBehaviour
 
         if (moveDirection.magnitude > 0)
         {
-            transform.forward = moveDirection;
+            // Smoothly interpolate the rotation
+            var targetRotation = Quaternion.LookRotation(moveDirection);
+            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
         }
-        
         characterController.Move(moveDirection * (speed * Time.deltaTime));
     }
+    
 }

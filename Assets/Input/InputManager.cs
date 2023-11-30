@@ -10,7 +10,8 @@ namespace Input
         public static InputManager instance;
         public Vector2 move { get; private set; }
         public bool isRunning { get; private set; }
-
+        public bool isAiming { get; private set;}
+        
         private PlayerControls playerControls;
 
         private void Awake()
@@ -29,6 +30,10 @@ namespace Input
 
             playerControls.Player.Run.performed += ctx => isRunning = true;
             playerControls.Player.Run.canceled += ctx => isRunning = false;
+
+            playerControls.Player.Aim.performed += ctx => isAiming = true;
+            playerControls.Player.Aim.canceled += ctx => isAiming = false;
+            
         }
 
         private void OnEnable()
