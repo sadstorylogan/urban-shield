@@ -8,8 +8,8 @@ namespace Input
     public class InputManager : MonoBehaviour
     {
         public static InputManager instance;
-        
         public Vector2 move { get; private set; }
+        public bool isRunning { get; private set; }
 
         private PlayerControls playerControls;
 
@@ -26,6 +26,9 @@ namespace Input
 
             playerControls.Player.Move.performed += ctx => move = ctx.ReadValue<Vector2>();
             playerControls.Player.Move.canceled += ctx => move = Vector2.zero;
+
+            playerControls.Player.Run.performed += ctx => isRunning = true;
+            playerControls.Player.Run.canceled += ctx => isRunning = false;
         }
 
         private void OnEnable()
