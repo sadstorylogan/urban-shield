@@ -10,9 +10,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float walkSpeed = 5f;
     [SerializeField] private float runSpeed = 10f;
     [SerializeField] private float rotationSpeed = 10f;
-    
+    [SerializeField] private float aimingSpeed = 5f;
+     
     private CharacterController characterController;
     private Animator animator;
+
+    private float aimingLayerWeight = 0f;
 
     private void Awake()
     {
@@ -26,10 +29,14 @@ public class PlayerController : MonoBehaviour
         var moveDirection = new Vector3(input.x, 0, input.y);
 
         var isRunning = InputManager.instance.isRunning;
+        var isAiming = InputManager.instance.isAiming;
         var speed = isRunning ? runSpeed : walkSpeed;
         
         animator.SetFloat("Speed", moveDirection.magnitude * (isRunning ? 2.0f : 1.0f));
         animator.SetBool("isRunning", isRunning);
+
+        // Update aiming layer weight
+        UpdateAimingWeight(isAiming);
 
         if (moveDirection.magnitude > 0)
         {
@@ -39,5 +46,10 @@ public class PlayerController : MonoBehaviour
         }
         characterController.Move(moveDirection * (speed * Time.deltaTime));
     }
-    
+
+    private void UpdateAimingWeight(bool isAiming)
+    {
+        aimingLayerWeight = isAiming ? Mathf.Min(aimingLayerWeight + Time.deltaTime, 1f) : Mathf.Max(aimingLayerWeight - Time.deltaTime, 0f);
+        animator.SetLayerWeight(animator.GetLayerIndex("Aiming"), aimingLayerWeight);
+    }
 }
