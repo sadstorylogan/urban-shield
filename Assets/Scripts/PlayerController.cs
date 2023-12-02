@@ -11,22 +11,35 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float runSpeed = 10f;
     [SerializeField] private float rotationSpeed = 10f;
     [SerializeField] private float aimingSpeed = 5f;
+    [SerializeField] private Transform cameraTransform;
      
     private CharacterController characterController;
     private Animator animator;
-
     private float aimingLayerWeight = 0f;
 
     private void Awake()
     {
         characterController = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
+
+        if (cameraTransform == null)
+        {
+            cameraTransform = Camera.main.transform;
+        }
     }
 
     private void Update()
     {
         var input = InputManager.instance.move;
-        var moveDirection = new Vector3(input.x, 0, input.y);
+
+        var forward = cameraTransform.forward;
+        var right = cameraTransform.right;
+        forward.y = 0;
+        right.y = 0;
+        forward.Normalize();
+        right.Normalize();
+
+        var moveDirection = (forward * input.y + right * input.x).normalized;
 
         var isRunning = InputManager.instance.isRunning;
         var isAiming = InputManager.instance.isAiming;
@@ -49,7 +62,8 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateAimingWeight(bool isAiming)
     {
-        aimingLayerWeight = isAiming ? Mathf.Min(aimingLayerWeight + Time.deltaTime, 1f) : Mathf.Max(aimingLayerWeight - Time.deltaTime, 0f);
+        var weightChange = Time.deltaTime * aimingSpeed;
+        aimingLayerWeight = isAiming ? Mathf.Min(aimingLayerWeight + weightChange, 1f) : Mathf.Max(aimingLayerWeight - weightChange, 0f);
         animator.SetLayerWeight(animator.GetLayerIndex("Aiming"), aimingLayerWeight);
     }
 }
