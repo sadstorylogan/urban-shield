@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Cinemachine;
 using StarterAssets;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
 public class PlayerController : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float normalSensitivity;
     [SerializeField] private float aimSensitivity;
     [SerializeField] private LayerMask aimColliderLayerMask = new LayerMask();
+    [SerializeField] private Transform debugTransform;
+    
     
 
     private ThirdPersonController thirdPersonController;
@@ -31,6 +34,7 @@ public class PlayerController : MonoBehaviour
         var ray = Camera.main.ScreenPointToRay(screenCenterPoint);
         if (Physics.Raycast(ray, out RaycastHit raycastHit, 999f, aimColliderLayerMask))
         {
+            debugTransform.position = raycastHit.point;
             mouseWorldPosition = raycastHit.point;
         }
         
