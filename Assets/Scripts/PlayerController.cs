@@ -1,69 +1,58 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Input;
-using Unity.Mathematics;
+using Cinemachine;
+using StarterAssets;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private float walkSpeed = 5f;
-    [SerializeField] private float runSpeed = 10f;
-    [SerializeField] private float rotationSpeed = 10f;
-    [SerializeField] private float aimingSpeed = 5f;
-    [SerializeField] private Transform cameraTransform;
-     
-    private CharacterController characterController;
-    private Animator animator;
-    private float aimingLayerWeight = 0f;
+    [SerializeField] private CinemachineVirtualCamera aimVirtualCamera;
+    [SerializeField] private float normalSensitivity;
+    [SerializeField] private float aimSensitivity;
+    [SerializeField] private LayerMask aimColliderLayerMask = new LayerMask();
+    
 
+    private ThirdPersonController thirdPersonController;
+    private StarterAssetsInputs starterAssetsInputs;
+    private Animator animator;
     private void Awake()
     {
-        characterController = GetComponent<CharacterController>();
+        thirdPersonController = GetComponent<ThirdPersonController>();
+        starterAssetsInputs = GetComponent<StarterAssetsInputs>();
         animator = GetComponent<Animator>();
-
-        if (cameraTransform == null)
-        {
-            cameraTransform = Camera.main.transform;
-        }
     }
 
     private void Update()
     {
-        var input = InputManager.instance.move;
-
-        var forward = cameraTransform.forward;
-        var right = cameraTransform.right;
-        forward.y = 0;
-        right.y = 0;
-        forward.Normalize();
-        right.Normalize();
-
-        var moveDirection = (forward * input.y + right * input.x).normalized;
-
-        var isRunning = InputManager.instance.isRunning;
-        var isAiming = InputManager.instance.isAiming;
-        var speed = isRunning ? runSpeed : walkSpeed;
+        var mouseWorldPosition = Vector3.zero;
         
-        animator.SetFloat("Speed", moveDirection.magnitude * (isRunning ? 2.0f : 1.0f));
-        animator.SetBool("isRunning", isRunning);
-
-        // Update aiming layer weight
-        UpdateAimingWeight(isAiming);
-
-        if (moveDirection.magnitude > 0)
+        var screenCenterPoint = new Vector2(Screen.width / 2f, Screen.height / 2f);
+        var ray = Camera.main.ScreenPointToRay(screenCenterPoint);
+        if (Physics.Raycast(ray, out RaycastHit raycastHit, 999f, aimColliderLayerMask))
         {
-            // Smoothly interpolate the rotation
-            var targetRotation = Quaternion.LookRotation(moveDirection);
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
+            mouseWorldPosition = raycastHit.point;
         }
-        characterController.Move(moveDirection * (speed * Time.deltaTime));
-    }
+        
+        if (starterAssetsInputs.aim)
+        {
+            aimVirtualCamera.gameObject.SetActive(true);
+            thirdPersonController.SetSensitivity(aimSensitivity);
+            thirdPersonController.SetRotateOnMove(false);
+            animator.SetLayerWeight(1, Mathf.Lerp(animator.GetLayerWeight(1), 1f, Time.deltaTime * 10f));
 
-    private void UpdateAimingWeight(bool isAiming)
-    {
-        var weightChange = Time.deltaTime * aimingSpeed;
-        aimingLayerWeight = isAiming ? Mathf.Min(aimingLayerWeight + weightChange, 1f) : Mathf.Max(aimingLayerWeight - weightChange, 0f);
-        animator.SetLayerWeight(animator.GetLayerIndex("Aiming"), aimingLayerWeight);
+            var worldAimTarget = mouseWorldPosition;
+            worldAimTarget.y = transform.position.y;
+            var aimDirecton = (worldAimTarget - transform.position).normalized;
+
+            transform.forward = Vector3.Lerp(transform.forward, aimDirecton, Time.deltaTime * 20f);
+        }
+        else
+        {
+            aimVirtualCamera.gameObject.SetActive(false);
+            thirdPersonController.SetSensitivity(normalSensitivity);
+            thirdPersonController.SetRotateOnMove(true);
+            animator.SetLayerWeight(1, Mathf.Lerp(animator.GetLayerWeight(1), 0f, Time.deltaTime * 10f));
+        }
     }
 }
