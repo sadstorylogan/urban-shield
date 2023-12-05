@@ -1,6 +1,10 @@
-﻿ using Cinemachine;
+﻿ using System.Numerics;
+ using Cinemachine;
  using UnityEditor.Experimental.GraphView;
  using UnityEngine;
+ using Quaternion = UnityEngine.Quaternion;
+ using Vector2 = UnityEngine.Vector2;
+ using Vector3 = UnityEngine.Vector3;
 #if ENABLE_INPUT_SYSTEM 
 using UnityEngine.InputSystem;
 #endif
@@ -118,6 +122,7 @@ namespace StarterAssets
         private CharacterController _controller;
         private StarterAssetsInputs _input;
         private GameObject _mainCamera;
+        private bool _rotateOnMove = true;
 
         private const float _threshold = 0.01f;
 
@@ -172,13 +177,35 @@ namespace StarterAssets
             JumpAndGravity();
             GroundedCheck();
             Move();
-            HandleAim();
 
+            Vector3 mouseWorldPosition = Vector3.zero;
+            
             Vector2 screenCenterPoint = new Vector2(Screen.width / 2f, Screen.height / 2f);
-            Ray ray = Camera.main.ScreenPointToRay(screenCenterPoint);
+            var ray = Camera.main.ScreenPointToRay(screenCenterPoint);
+            
             if (Physics.Raycast(ray, out RaycastHit raycastHit, 999f, aimColliderLayerMask))
             {
                 debugTransform.position = raycastHit.point;
+                mouseWorldPosition = raycastHit.point;
+            }
+            
+            if (_input.aim)
+            {
+                aimVirtualCamera.gameObject.SetActive(true);
+                _rotateOnMove = false;
+                _animator.SetLayerWeight(1, Mathf.Lerp(_animator.GetLayerWeight(1), 1f, Time.deltaTime * 10f));
+
+                Vector3 worldAimTarget = mouseWorldPosition;
+                worldAimTarget.y = transform.position.y;
+                Vector3 aimDirection = (worldAimTarget - transform.position).normalized;
+
+                transform.forward = Vector3.Lerp(transform.forward, aimDirection, Time.deltaTime * 20f);
+            }
+            else
+            {
+                aimVirtualCamera.gameObject.SetActive(false);
+                _rotateOnMove = true;
+                _animator.SetLayerWeight(1, Mathf.Lerp(_animator.GetLayerWeight(1), 0f, Time.deltaTime * 10f));
             }
         }
         
@@ -187,18 +214,6 @@ namespace StarterAssets
             CameraRotation();
         }
         
-        private void HandleAim()
-        {
-            if (_input.aim)
-            {
-                aimVirtualCamera.gameObject.SetActive(true);
-            }
-            else
-            {
-                aimVirtualCamera.gameObject.SetActive(false);
-            }
-        }
-
         private void AssignAnimationIDs()
         {
             _animIDSpeed = Animator.StringToHash("Speed");
@@ -294,7 +309,10 @@ namespace StarterAssets
                     RotationSmoothTime);
 
                 // rotate to face input direction relative to camera position
-                transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+                if (_rotateOnMove)
+                {
+                    transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+                }
             }
 
 
