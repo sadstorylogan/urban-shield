@@ -1,5 +1,5 @@
 {
-    "name": "PlayerControls",
+    "name": "StarterAssets",
     "maps": [
         {
             "name": "Player",
@@ -44,7 +44,7 @@
                 {
                     "name": "Aim",
                     "type": "PassThrough",
-                    "id": "618747bc-2344-4595-84e5-b9ed2142a21a",
+                    "id": "b646dd85-e286-4798-83d5-927df6694826",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -230,7 +230,7 @@
                 },
                 {
                     "name": "",
-                    "id": "47485f71-6456-4312-85f6-6cd8409e7ea9",
+                    "id": "daa017da-9246-492a-ae33-de181584a4bd",
                     "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
@@ -241,7 +241,7 @@
                 },
                 {
                     "name": "",
-                    "id": "fb06392b-8ec8-416d-89ba-e9a9af92c9a7",
+                    "id": "d886ce23-fa49-4152-a661-4cc94dd486c3",
                     "path": "<Gamepad>/leftTrigger",
                     "interactions": "",
                     "processors": "",

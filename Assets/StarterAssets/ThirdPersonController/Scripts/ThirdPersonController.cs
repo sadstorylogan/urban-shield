@@ -1,10 +1,13 @@
-﻿ using System;
+﻿ using Cinemachine;
+ using UnityEditor.Experimental.GraphView;
  using UnityEngine;
- using Random = UnityEngine.Random;
 #if ENABLE_INPUT_SYSTEM 
 using UnityEngine.InputSystem;
 #endif
- 
+
+/* Note: animations are called via the controller for both the character and capsule using animator null checks
+ */
+
 namespace StarterAssets
 {
     [RequireComponent(typeof(CharacterController))]
@@ -26,9 +29,7 @@ namespace StarterAssets
 
         [Tooltip("Acceleration and deceleration")]
         public float SpeedChangeRate = 10.0f;
-
-        public float Sensitivity = 1f;
-
+        
         public AudioClip LandingAudioClip;
         public AudioClip[] FootstepAudioClips;
         [Range(0, 1)] public float FootstepAudioVolume = 0.5f;
@@ -64,6 +65,9 @@ namespace StarterAssets
         [Tooltip("The follow target set in the Cinemachine Virtual Camera that the camera will follow")]
         public GameObject CinemachineCameraTarget;
 
+        [Tooltip("Reference to the aim camera")]
+        public CinemachineVirtualCamera aimVirtualCamera;
+
         [Tooltip("How far in degrees can you move the camera up")]
         public float TopClamp = 70.0f;
 
@@ -76,6 +80,14 @@ namespace StarterAssets
         [Tooltip("For locking the camera position on all axis")]
         public bool LockCameraPosition = false;
 
+        [Header("Shooting properties")] 
+        public LayerMask aimColliderLayerMask = new LayerMask();
+        
+        [Header("Debug properties")] 
+        public Transform debugTransform;
+        
+        
+        
         // cinemachine
         private float _cinemachineTargetYaw;
         private float _cinemachineTargetPitch;
@@ -106,7 +118,6 @@ namespace StarterAssets
         private CharacterController _controller;
         private StarterAssetsInputs _input;
         private GameObject _mainCamera;
-        private bool _rotateOnMove = true;
 
         private const float _threshold = 0.01f;
 
@@ -161,11 +172,31 @@ namespace StarterAssets
             JumpAndGravity();
             GroundedCheck();
             Move();
-        }
+            HandleAim();
 
+            Vector2 screenCenterPoint = new Vector2(Screen.width / 2f, Screen.height / 2f);
+            Ray ray = Camera.main.ScreenPointToRay(screenCenterPoint);
+            if (Physics.Raycast(ray, out RaycastHit raycastHit, 999f, aimColliderLayerMask))
+            {
+                debugTransform.position = raycastHit.point;
+            }
+        }
+        
         private void LateUpdate()
         {
             CameraRotation();
+        }
+        
+        private void HandleAim()
+        {
+            if (_input.aim)
+            {
+                aimVirtualCamera.gameObject.SetActive(true);
+            }
+            else
+            {
+                aimVirtualCamera.gameObject.SetActive(false);
+            }
         }
 
         private void AssignAnimationIDs()
@@ -200,8 +231,8 @@ namespace StarterAssets
                 //Don't multiply mouse input by Time.deltaTime;
                 float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
 
-                _cinemachineTargetYaw += _input.look.x * deltaTimeMultiplier * Sensitivity;
-                _cinemachineTargetPitch += _input.look.y * deltaTimeMultiplier * Sensitivity;
+                _cinemachineTargetYaw += _input.look.x * deltaTimeMultiplier;
+                _cinemachineTargetPitch += _input.look.y * deltaTimeMultiplier;
             }
 
             // clamp our rotations so our values are limited 360 degrees
@@ -263,10 +294,7 @@ namespace StarterAssets
                     RotationSmoothTime);
 
                 // rotate to face input direction relative to camera position
-                if (_rotateOnMove)
-                {
-                    transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
-                }
+                transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
             }
 
 
@@ -392,16 +420,6 @@ namespace StarterAssets
             {
                 AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
             }
-        }
-
-        public void SetSensitivity(float newSensitivity)
-        {
-            Sensitivity = newSensitivity;
-        }
-
-        public void SetRotateOnMove(bool newRotateOnMove)
-        {
-            _rotateOnMove = newRotateOnMove;
         }
     }
 }
