@@ -2,6 +2,7 @@
  using Cinemachine;
  using UnityEditor.Experimental.GraphView;
  using UnityEngine;
+ using UnityEngine.Animations.Rigging;
  using Quaternion = UnityEngine.Quaternion;
  using Vector2 = UnityEngine.Vector2;
  using Vector3 = UnityEngine.Vector3;
@@ -33,6 +34,8 @@ namespace StarterAssets
 
         [Tooltip("Acceleration and deceleration")]
         public float SpeedChangeRate = 10.0f;
+
+        public float Sensitivity = 1f;
         
         public AudioClip LandingAudioClip;
         public AudioClip[] FootstepAudioClips;
@@ -68,10 +71,7 @@ namespace StarterAssets
         [Header("Cinemachine")]
         [Tooltip("The follow target set in the Cinemachine Virtual Camera that the camera will follow")]
         public GameObject CinemachineCameraTarget;
-
-        [Tooltip("Reference to the aim camera")]
-        public CinemachineVirtualCamera aimVirtualCamera;
-
+        
         [Tooltip("How far in degrees can you move the camera up")]
         public float TopClamp = 70.0f;
 
@@ -83,12 +83,6 @@ namespace StarterAssets
 
         [Tooltip("For locking the camera position on all axis")]
         public bool LockCameraPosition = false;
-
-        [Header("Shooting properties")] 
-        public LayerMask aimColliderLayerMask = new LayerMask();
-        
-        [Header("Debug properties")] 
-        public Transform debugTransform;
         
         
         
@@ -177,36 +171,7 @@ namespace StarterAssets
             JumpAndGravity();
             GroundedCheck();
             Move();
-
-            Vector3 mouseWorldPosition = Vector3.zero;
             
-            Vector2 screenCenterPoint = new Vector2(Screen.width / 2f, Screen.height / 2f);
-            var ray = Camera.main.ScreenPointToRay(screenCenterPoint);
-            
-            if (Physics.Raycast(ray, out RaycastHit raycastHit, 999f, aimColliderLayerMask))
-            {
-                debugTransform.position = raycastHit.point;
-                mouseWorldPosition = raycastHit.point;
-            }
-            
-            if (_input.aim)
-            {
-                aimVirtualCamera.gameObject.SetActive(true);
-                _rotateOnMove = false;
-                _animator.SetLayerWeight(1, Mathf.Lerp(_animator.GetLayerWeight(1), 1f, Time.deltaTime * 10f));
-
-                Vector3 worldAimTarget = mouseWorldPosition;
-                worldAimTarget.y = transform.position.y;
-                Vector3 aimDirection = (worldAimTarget - transform.position).normalized;
-
-                transform.forward = Vector3.Lerp(transform.forward, aimDirection, Time.deltaTime * 20f);
-            }
-            else
-            {
-                aimVirtualCamera.gameObject.SetActive(false);
-                _rotateOnMove = true;
-                _animator.SetLayerWeight(1, Mathf.Lerp(_animator.GetLayerWeight(1), 0f, Time.deltaTime * 10f));
-            }
         }
         
         private void LateUpdate()
@@ -246,8 +211,8 @@ namespace StarterAssets
                 //Don't multiply mouse input by Time.deltaTime;
                 float deltaTimeMultiplier = IsCurrentDeviceMouse ? 1.0f : Time.deltaTime;
 
-                _cinemachineTargetYaw += _input.look.x * deltaTimeMultiplier;
-                _cinemachineTargetPitch += _input.look.y * deltaTimeMultiplier;
+                _cinemachineTargetYaw += _input.look.x * deltaTimeMultiplier * Sensitivity;
+                _cinemachineTargetPitch += _input.look.y * deltaTimeMultiplier * Sensitivity;
             }
 
             // clamp our rotations so our values are limited 360 degrees
@@ -438,6 +403,16 @@ namespace StarterAssets
             {
                 AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
             }
+        }
+
+        public void SetSensitivity(float newSensitivity)
+        {
+            Sensitivity = newSensitivity;
+        }
+
+        public void SetRotateOnMove(bool newRotateOnMove)
+        {
+            _rotateOnMove = newRotateOnMove;
         }
     }
 }
