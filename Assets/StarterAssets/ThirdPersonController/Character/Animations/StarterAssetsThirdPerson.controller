@@ -310,7 +310,7 @@ AnimatorController:
   - serializedVersion: 5
     m_Name: Aiming
     m_StateMachine: {fileID: -6499686682790900137}
-    m_Mask: {fileID: 0}
+    m_Mask: {fileID: 31900000, guid: ffe8e98361ffdba4092643836a435c99, type: 2}
     m_Motions: []
     m_Behaviours: []
     m_BlendingMode: 0
